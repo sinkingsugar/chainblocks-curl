@@ -7,7 +7,7 @@ add_compile_options(-Wall -march=core2)
 set(
   MY_PROJECT_SOURCE_FILES
   ${MY_PROJECT_SOURCE_FILES}
-  ${CMAKE_CURRENT_LIST_DIR}/tgbot.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/curl.cpp
   )
 
 #### Header paths for tidy
@@ -88,9 +88,9 @@ add_library(
   cbcurl SHARED
   ${CMAKE_CURRENT_LIST_DIR}/curl.cpp
   )
-add_dependencies(cbtgbot format)
+add_dependencies(cbcurl format)
 if(WIN32)
-  target_link_libraries(cbcurl -static)
+  target_link_libraries(cbcurl -static -lcurl)
 else()
-  target_link_libraries(cbcurl)
+  target_link_libraries(cbcurl -Bstatic -lcurl)
 endif()
