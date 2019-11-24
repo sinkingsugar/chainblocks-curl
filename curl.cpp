@@ -164,15 +164,35 @@ struct Unescape {
   }
 };
 
+struct HTMLDecode {
+  std::string _output;
+
+  static CBTypesInfo inputTypes() { return Common::strInfos; }
+  static CBTypesInfo outputTypes() { return Common::strInfos; }
+
+  CBVar activate(CBContext *context, const CBVar &input) {
+    _output.assign(input.payload.stringValue);
+    auto size = decode_html_entities_utf8((char *)_output.c_str(), NULL);
+    _output.resize(size);
+    // return
+    CBVar res{};
+    res.valueType = CBType::String;
+    res.payload.stringValue = _output.c_str();
+    return res;
+  }
+};
+
 typedef BlockWrapper<cbcurl::Get> GetBlock;
 typedef BlockWrapper<cbcurl::Escape> EscapeBlock;
 typedef BlockWrapper<cbcurl::Unescape> UnescapeBlock;
+typedef BlockWrapper<cbcurl::HTMLDecode> HTMLDecodeBlock;
 
 void registerBlocks() {
   Common::init();
   Core::registerBlock("Curl.Get", &cbcurl::GetBlock::create);
   Core::registerBlock("Curl.Escape", &cbcurl::EscapeBlock::create);
   Core::registerBlock("Curl.Unescape", &cbcurl::UnescapeBlock::create);
+  Core::registerBlock("Curl.HTMLDecode", &cbcurl::HTMLDecodeBlock::create);
 }
 } // namespace cbcurl
 }; // namespace chainblocks
