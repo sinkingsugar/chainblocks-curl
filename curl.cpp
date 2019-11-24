@@ -101,11 +101,77 @@ struct Get {
   }
 };
 
+struct Escape {
+  char *_currentStr = nullptr;
+  CURL *_curl;
+
+  Escape() { _curl = curl_easy_init(); }
+
+  ~Escape() {
+    if (_currentStr) {
+      curl_free(_currentStr);
+    }
+    curl_easy_cleanup(_curl);
+  }
+
+  static CBTypesInfo inputTypes() { return Common::strInfos; }
+  static CBTypesInfo outputTypes() { return Common::strInfos; }
+
+  CBVar activate(CBContext *context, const CBVar &input) {
+    // delete existing
+    if (_currentStr) {
+      curl_free(_currentStr);
+    }
+    // process
+    _currentStr = curl_easy_escape(_curl, input.payload.stringValue, 0);
+    // return
+    CBVar res{};
+    res.valueType = CBType::String;
+    res.payload.stringValue = _currentStr;
+    return res;
+  }
+};
+
+struct Unescape {
+  char *_currentStr = nullptr;
+  CURL *_curl;
+
+  Unescape() { _curl = curl_easy_init(); }
+
+  ~Unescape() {
+    if (_currentStr) {
+      curl_free(_currentStr);
+    }
+    curl_easy_cleanup(_curl);
+  }
+
+  static CBTypesInfo inputTypes() { return Common::strInfos; }
+  static CBTypesInfo outputTypes() { return Common::strInfos; }
+
+  CBVar activate(CBContext *context, const CBVar &input) {
+    // delete existing
+    if (_currentStr) {
+      curl_free(_currentStr);
+    }
+    // process
+    _currentStr = curl_easy_unescape(_curl, input.payload.stringValue, 0, NULL);
+    // return
+    CBVar res{};
+    res.valueType = CBType::String;
+    res.payload.stringValue = _currentStr;
+    return res;
+  }
+};
+
 typedef BlockWrapper<cbcurl::Get> GetBlock;
+typedef BlockWrapper<cbcurl::Escape> EscapeBlock;
+typedef BlockWrapper<cbcurl::Unescape> UnescapeBlock;
 
 void registerBlocks() {
   Common::init();
   Core::registerBlock("Curl.Get", &cbcurl::GetBlock::create);
+  Core::registerBlock("Curl.Escape", &cbcurl::EscapeBlock::create);
+  Core::registerBlock("Curl.Unescape", &cbcurl::UnescapeBlock::create);
 }
 } // namespace cbcurl
 }; // namespace chainblocks
