@@ -1,6 +1,8 @@
 /* SPDX-License-Identifier: BSD 3-Clause "New" or "Revised" License */
 /* Copyright © 2019 Giovanni Petrantoni */
 
+#define DLLBLOCK_NAMESPACE cbcurl
+
 #define STB_DS_IMPLEMENTATION 1
 
 #include <curl/curl.h>
@@ -9,7 +11,7 @@
 #include <vector>
 
 namespace chainblocks {
-namespace Curl {
+namespace cbcurl {
 struct Globals {
   Globals() { curl_global_init(CURL_GLOBAL_ALL); }
   ~Globals() { curl_global_cleanup(); }
@@ -57,6 +59,7 @@ struct Get {
     get->_buffer.resize(offset + nmemb + 1);
     memcpy(&get->_buffer[offset], ptr, nmemb);
     // to allow easy string conversion we do this little trick
+    // curl won't include 0 terminators
     get->_buffer[offset + nmemb] = 0;
     get->_buffer.resize(offset + nmemb);
     return nmemb;
@@ -98,11 +101,11 @@ struct Get {
   }
 };
 
-typedef BlockWrapper<Curl::Get> GetBlock;
+typedef BlockWrapper<cbcurl::Get> GetBlock;
 
-} // namespace Curl
 void registerBlocks() {
-  Curl::Common::init();
-  Core::registerBlock("Curl.Get", &Curl::GetBlock::create);
+  Common::init();
+  Core::registerBlock("Curl.Get", &cbcurl::GetBlock::create);
 }
+} // namespace cbcurl
 }; // namespace chainblocks
