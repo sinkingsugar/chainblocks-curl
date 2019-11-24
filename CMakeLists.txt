@@ -87,6 +87,7 @@ include_directories(
 add_library(
   cbcurl SHARED
   ${CMAKE_CURRENT_LIST_DIR}/curl.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/entities.c
   )
 add_dependencies(cbcurl format)
 if(WIN32)

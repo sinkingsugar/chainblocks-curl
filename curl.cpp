@@ -5,6 +5,7 @@
 
 #define STB_DS_IMPLEMENTATION 1
 
+#include "entities.h"
 #include <curl/curl.h>
 #include <dllblock.hpp>
 #include <future>
