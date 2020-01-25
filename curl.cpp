@@ -21,22 +21,14 @@ struct Globals {
 struct Common {
   static inline Globals globals{};
 
-  static inline CBTypeInfo anyInfo{CBType::Any};
-  static inline CBTypesInfo anyInfos = nullptr;
+  static inline CBTypeInfo anyInfo[] = {{CBType::Any}};
+  static inline CBTypesInfo anyInfos = {anyInfo, 1, 0};
 
-  static inline CBTypeInfo strInfo{CBType::String};
-  static inline CBTypesInfo strInfos = nullptr;
+  static inline CBTypeInfo strInfo[] = {{CBType::String}};
+  static inline CBTypesInfo strInfos = {strInfo, 1, 0};
 
-  static inline CBTypeInfo bytesInfo{CBType::Bytes};
-  static inline CBTypesInfo bytesInfos = nullptr;
-
-  static void init() {
-    stbds_arrpush(anyInfos, anyInfo);
-
-    stbds_arrpush(strInfos, strInfo);
-
-    stbds_arrpush(bytesInfos, bytesInfo);
-  }
+  static inline CBTypeInfo bytesInfo[] = {{CBType::Bytes}};
+  static inline CBTypesInfo bytesInfos = {bytesInfo, 1, 0};
 };
 
 struct Get {
@@ -188,7 +180,6 @@ typedef BlockWrapper<cbcurl::Unescape> UnescapeBlock;
 typedef BlockWrapper<cbcurl::HTMLDecode> HTMLDecodeBlock;
 
 void registerBlocks() {
-  Common::init();
   Core::registerBlock("Curl.Get", &cbcurl::GetBlock::create);
   Core::registerBlock("Curl.Escape", &cbcurl::EscapeBlock::create);
   Core::registerBlock("Curl.Unescape", &cbcurl::UnescapeBlock::create);
